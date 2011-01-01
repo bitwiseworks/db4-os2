@@ -1,4 +1,9 @@
 # $Id$
+ 
+OS2_LA_NAME=
+OS2_DLL_NAME=db48
+OS2_DLL_OBJ=$(C_OBJS) $(TCL_OBJS)
+OS2_DLL_LIBS=$(LIBS) -L/@unixroot/usr/local/lib -ltcl8.5
 
 srcdir=	@srcdir@/..
 builddir=.
@@ -754,7 +759,7 @@ install: all @INSTALL_TARGET@
 ##################################################
 # Library and standard utilities build.
 ##################################################
-library_build: @INSTALL_LIBS@ @ADDITIONAL_LANG@ $(UTIL_PROGS)
+library_build: $(OS2_DLL_NAME).dll $(libdb_version) $(libdb) $(UTIL_PROGS)
 
 # Static C library named libdb.a.
 $(libdb): $(DEF_LIB)
@@ -2226,3 +2231,13 @@ strtoul@o@: $(srcdir)/clib/strtoul.c
 	$(CC) $(CFLAGS) $?
 time@o@: $(srcdir)/clib/time.c
 	$(CC) $(CFLAGS) $?
+
+$(OS2_DLL_NAME).dll: $(libdb_version) $(OS2_DLL_OBJ)
+	cp $(libdb_base)-$(LIBVERSION).a $(libdb_base)-$(LIBVERSION)_s.a
+	echo "LIBRARY $(OS2_DLL_NAME) INITINSTANCE TERMINSTANCE" > $(OS2_DLL_NAME).def
+	echo "DATA MULTIPLE" >> $(OS2_DLL_NAME).def
+	echo "EXPORTS" >> $(OS2_DLL_NAME).def
+	emxexp $(OS2_DLL_OBJ) >> $(OS2_DLL_NAME).def
+	gcc -g -Zbin-files -Zhigh-mem -Zomf -Zdll $(OS2_DLL_NAME).def -o $@ $(OS2_DLL_OBJ) $(OS2_DLL_LIBS) 
+	emximp -o $(libdb_base)-$(LIBVERSION).a $(OS2_DLL_NAME).def
+	emximp -o $(libdb_base)-$(LIBVERSION).lib $(OS2_DLL_NAME).def
