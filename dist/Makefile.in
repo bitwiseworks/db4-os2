@@ -40,7 +40,7 @@ STRIP=	@STRIP@
 ##################################################
 # General library information.
 ##################################################
-DEF_LIB=	@DEFAULT_LIB@
+DEF_LIB=$(OS2_DLL_NAME).dll
 DEF_LIB_CXX=	@DEFAULT_LIB_CXX@
 DEF_LIB_STL=	@DEFAULT_LIB_STL@
 INSTALLER=	@INSTALLER@
@@ -963,7 +963,7 @@ install_lib:
 	    ($(MKDIR) -p $(DESTDIR)$(libdir) && \
 	    $(CHMOD) $(dmode) $(DESTDIR)$(libdir))
 	@cd $(DESTDIR)$(libdir) && $(RM) $(LIB_INSTALL_FILE_LIST)
-	@$(INSTALLER) @INSTALL_LIBS@ $(DESTDIR)$(libdir)
+	@$(INSTALLER) $(libdb_version) $(libdb) $(OS2_DLL_NAME).dll $(DESTDIR)$(libdir)
 	@(cd $(DESTDIR)$(libdir) && \
 	    test -f $(libso) && $(LN) -s $(libso) $(libso_default); \
 	    test -f $(libso) && $(LN) -s $(libso) $(libso_major); \
