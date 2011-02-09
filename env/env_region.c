@@ -346,6 +346,9 @@ creation:
 	    __env_alloc_size(sizeof(DB_THREAD_INFO));
 	size += env->thr_nbucket * __env_alloc_size(sizeof(DB_HASHTAB));
 	size += 16 * 1024;
+#ifdef __KLIBC__
+	size += 16 * 1024;
+#endif
 	tregion.size = size;
 	tregion.segid = INVALID_REGION_SEGID;
 	if ((ret = __env_sys_attach(env, infop, &tregion)) != 0)
