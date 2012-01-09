@@ -1,9 +1,14 @@
 # $Id$
  
-OS2_LA_NAME=
+OS2_LA_NAME=libdb
 OS2_DLL_NAME=db48
 OS2_DLL_OBJ=$(C_OBJS) $(TCL_OBJS)
-OS2_DLL_LIBS=$(LIBS) -L/@unixroot/usr/local/lib -ltcl8.5
+OS2_DLL_LIBS=$(LIBS) -ltcl8.5
+
+OS2_LA_NAME2=libdb_cxx
+OS2_DLL_NAME2=db48cxx
+OS2_DLL_OBJ2=$(CXX_OBJS)
+OS2_DLL_LIBS2=$(LIBS) libdb.a -lstdc++
 
 srcdir=	@srcdir@/..
 builddir=.
@@ -759,7 +764,7 @@ install: all @INSTALL_TARGET@
 ##################################################
 # Library and standard utilities build.
 ##################################################
-library_build: $(OS2_DLL_NAME).dll $(libdb_version) $(libdb) $(UTIL_PROGS)
+library_build: $(OS2_DLL_NAME).dll $(OS2_DLL_NAME2).dll $(libdb_version) $(libdb) $(libcxx_version) $(libcxx) $(UTIL_PROGS)
 
 # Static C library named libdb.a.
 $(libdb): $(DEF_LIB)
@@ -963,7 +968,7 @@ install_lib:
 	    ($(MKDIR) -p $(DESTDIR)$(libdir) && \
 	    $(CHMOD) $(dmode) $(DESTDIR)$(libdir))
 	@cd $(DESTDIR)$(libdir) && $(RM) $(LIB_INSTALL_FILE_LIST)
-	@$(INSTALLER) $(libdb_version) $(libdb) $(OS2_DLL_NAME).dll $(DESTDIR)$(libdir)
+	@$(INSTALLER) $(libdb_version) $(libdb) $(libcxx_version) $(libcxx) $(OS2_DLL_NAME).dll $(OS2_DLL_NAME2).dll $(DESTDIR)$(libdir)
 	@(cd $(DESTDIR)$(libdir) && \
 	    test -f $(libso) && $(LN) -s $(libso) $(libso_default); \
 	    test -f $(libso) && $(LN) -s $(libso) $(libso_major); \
@@ -2233,11 +2238,21 @@ time@o@: $(srcdir)/clib/time.c
 	$(CC) $(CFLAGS) $?
 
 $(OS2_DLL_NAME).dll: $(libdb_version) $(OS2_DLL_OBJ)
-	cp $(libdb_base)-$(LIBVERSION).a $(libdb_base)-$(LIBVERSION)_s.a
+	cp $(OS2_LA_NAME)-$(LIBVERSION).a $(OS2_LA_NAME)-$(LIBVERSION)_s.a
 	echo "LIBRARY $(OS2_DLL_NAME) INITINSTANCE TERMINSTANCE" > $(OS2_DLL_NAME).def
 	echo "DATA MULTIPLE" >> $(OS2_DLL_NAME).def
 	echo "EXPORTS" >> $(OS2_DLL_NAME).def
 	emxexp $(OS2_DLL_OBJ) >> $(OS2_DLL_NAME).def
 	gcc -g -Zbin-files -Zhigh-mem -Zomf -Zdll $(OS2_DLL_NAME).def -o $@ $(OS2_DLL_OBJ) $(OS2_DLL_LIBS) 
-	emximp -o $(libdb_base)-$(LIBVERSION).a $(OS2_DLL_NAME).def
-	emximp -o $(libdb_base)-$(LIBVERSION).lib $(OS2_DLL_NAME).def
+	emximp -o $(OS2_LA_NAME)-$(LIBVERSION).a $(OS2_DLL_NAME).def
+	emximp -o $(OS2_LA_NAME)-$(LIBVERSION).lib $(OS2_DLL_NAME).def
+
+$(OS2_DLL_NAME2).dll: $(libdb_version) $(OS2_DLL_OBJ2)
+	cp $(OS2_LA_NAME2)-$(LIBVERSION).a $(OS2_LA_NAME2)-$(LIBVERSION)_s.a
+	echo "LIBRARY $(OS2_DLL_NAME2) INITINSTANCE TERMINSTANCE" > $(OS2_DLL_NAME2).def
+	echo "DATA MULTIPLE" >> $(OS2_DLL_NAME2).def
+	echo "EXPORTS" >> $(OS2_DLL_NAME2).def
+	emxexp $(OS2_DLL_OBJ2) >> $(OS2_DLL_NAME2).def
+	gcc -g -Zbin-files -Zhigh-mem -Zomf -Zdll $(OS2_DLL_NAME2).def -o $@ $(OS2_DLL_OBJ2) $(OS2_DLL_LIBS2) 
+	emximp -o $(OS2_LA_NAME2)-$(LIBVERSION).a $(OS2_DLL_NAME2).def
+	emximp -o $(OS2_LA_NAME2)-$(LIBVERSION).lib $(OS2_DLL_NAME2).def
