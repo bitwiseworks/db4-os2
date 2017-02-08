@@ -1011,11 +1011,11 @@ DOCLIST=api_reference articles collections csharp gsg gsg_db_rep \
 
 install_docs:
 	@echo "Installing documentation: $(DESTDIR)$(docdir) ..."
-	@test -d $(DESTDIR)$(docdir) || \
-	    ($(MKDIR) -p $(DESTDIR)$(docdir) && \
-	    $(CHMOD) $(dmode) $(DESTDIR)$(docdir))
-	@cd $(DESTDIR)$(docdir) && $(RM) -r $(DOCLIST)
-	@cd $(srcdir)/docs && $(CP) -pr $(DOCLIST) $(DESTDIR)$(docdir)/
+#	@test -d $(DESTDIR)$(docdir) || \
+#	    ($(MKDIR) -p $(DESTDIR)$(docdir) && \
+#	    $(CHMOD) $(dmode) $(DESTDIR)$(docdir))
+#	@cd $(DESTDIR)$(docdir) && $(RM) -r $(DOCLIST)
+#	@cd $(srcdir)/docs && $(CP) -pr $(DOCLIST) $(DESTDIR)$(docdir)/
 
 uninstall_docs:
 	@cd $(DESTDIR)$(docdir) && $(RM) -r $(DOCLIST)
