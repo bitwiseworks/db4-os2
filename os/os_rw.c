@@ -154,13 +154,6 @@ __os_read(env, fhp, addr, len, nrp)
 		__db_msg(env,
 		    "fileops: read %s: %lu bytes", fhp->name, (u_long)len);
 
-#ifdef __KLIBC__
-	// need to make sure buffer is already committed, we cannot pass uncommitted
-	// pages to kernel
-	int mcommit( void*, int, int /* bool write */);
-	mcommit( addr, len, 1);
-#endif
-
 	if (DB_GLOBAL(j_read) != NULL) {
 		*nrp = len;
 		LAST_PANIC_CHECK_BEFORE_IO(env);
