@@ -7,6 +7,9 @@ trap 'rm -f aclocal.m4 ; exit 0' 0 1 2 3 13 15
 
 . ./RELEASE
 
+echo "autoconf: running libtoolize..."
+libtoolize -fci
+
 echo "autoconf: building aclocal.m4..."
 cat aclocal/*.m4 aclocal_java/*.m4 > aclocal.m4
 
