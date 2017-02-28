@@ -106,10 +106,14 @@ AC_DEFUN(SC_LOAD_TCLCONFIG, [
 	# load time. [#4843]  Furthermore, with Tcl 8.3, the link flags
 	# given by the Tcl spec are insufficient for our use.  [#5779],[#17109]
 	#
+ 	# On OS/2, the shared DB Tcl library needs a Tcl library name at link time.
+	#
 	case "$host_os" in
 	aix*)
 		LIBTSO_LIBS="$LIBTSO_LIBS $TCL_LIB_SPEC $TCL_LIB_FLAG"
 		LIBTSO_LIBS="$LIBTSO_LIBS -L$TCL_EXEC_PREFIX/lib -ltcl$TCL_VERSION";;
+	os2*)
+		LIBTSO_LIBS="$LIBTSO_LIBS -l$TCL_LIB_FILE"
 	esac
 	AC_SUBST(TCL_BIN_DIR)
 	AC_SUBST(TCL_INCLUDE_SPEC)
