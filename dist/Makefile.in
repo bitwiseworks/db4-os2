@@ -1,14 +1,4 @@
 # $Id$
- 
-OS2_LA_NAME=libdb
-OS2_DLL_NAME=db48
-OS2_DLL_OBJ=$(C_OBJS) $(TCL_OBJS)
-OS2_DLL_LIBS=$(LIBS) -ltcl8.5
-
-OS2_LA_NAME2=libdb_cxx
-OS2_DLL_NAME2=db48cxx
-OS2_DLL_OBJ2=$(CXX_OBJS)
-OS2_DLL_LIBS2=$(LIBS) libdb.a -lstdc++
 
 srcdir=	@srcdir@/..
 builddir=.
@@ -45,7 +35,7 @@ STRIP=	@STRIP@
 ##################################################
 # General library information.
 ##################################################
-DEF_LIB=$(OS2_DLL_NAME).dll
+DEF_LIB=	@DEFAULT_LIB@
 DEF_LIB_CXX=	@DEFAULT_LIB_CXX@
 DEF_LIB_STL=	@DEFAULT_LIB_STL@
 INSTALLER=	@INSTALLER@
@@ -764,7 +754,7 @@ install: all @INSTALL_TARGET@
 ##################################################
 # Library and standard utilities build.
 ##################################################
-library_build: $(OS2_DLL_NAME).dll $(OS2_DLL_NAME2).dll $(libdb_version) $(libdb) $(libcxx_version) $(libcxx) $(UTIL_PROGS)
+library_build: @INSTALL_LIBS@ @ADDITIONAL_LANG@ $(UTIL_PROGS)
 
 # Static C library named libdb.a.
 $(libdb): $(DEF_LIB)
@@ -968,7 +958,7 @@ install_lib:
 	    ($(MKDIR) -p $(DESTDIR)$(libdir) && \
 	    $(CHMOD) $(dmode) $(DESTDIR)$(libdir))
 	@cd $(DESTDIR)$(libdir) && $(RM) $(LIB_INSTALL_FILE_LIST)
-	@$(INSTALLER) $(libdb_version) $(libdb) $(libcxx_version) $(libcxx) $(OS2_DLL_NAME).dll $(OS2_DLL_NAME2).dll $(DESTDIR)$(libdir)
+	@$(INSTALLER) @INSTALL_LIBS@ $(DESTDIR)$(libdir)
 	@(cd $(DESTDIR)$(libdir) && \
 	    test -f $(libso) && $(LN) -s $(libso) $(libso_default); \
 	    test -f $(libso) && $(LN) -s $(libso) $(libso_major); \
@@ -1011,11 +1001,11 @@ DOCLIST=api_reference articles collections csharp gsg gsg_db_rep \
 
 install_docs:
 	@echo "Installing documentation: $(DESTDIR)$(docdir) ..."
-#	@test -d $(DESTDIR)$(docdir) || \
-#	    ($(MKDIR) -p $(DESTDIR)$(docdir) && \
-#	    $(CHMOD) $(dmode) $(DESTDIR)$(docdir))
-#	@cd $(DESTDIR)$(docdir) && $(RM) -r $(DOCLIST)
-#	@cd $(srcdir)/docs && $(CP) -pr $(DOCLIST) $(DESTDIR)$(docdir)/
+	@test -d $(DESTDIR)$(docdir) || \
+	    ($(MKDIR) -p $(DESTDIR)$(docdir) && \
+	    $(CHMOD) $(dmode) $(DESTDIR)$(docdir))
+	@cd $(DESTDIR)$(docdir) && $(RM) -r $(DOCLIST)
+	@cd $(srcdir)/docs && $(CP) -pr $(DOCLIST) $(DESTDIR)$(docdir)/
 
 uninstall_docs:
 	@cd $(DESTDIR)$(docdir) && $(RM) -r $(DOCLIST)
@@ -2236,23 +2226,3 @@ strtoul@o@: $(srcdir)/clib/strtoul.c
 	$(CC) $(CFLAGS) $?
 time@o@: $(srcdir)/clib/time.c
 	$(CC) $(CFLAGS) $?
-
-$(OS2_DLL_NAME).dll: $(libdb_version) $(OS2_DLL_OBJ)
-	cp $(OS2_LA_NAME)-$(LIBVERSION).a $(OS2_LA_NAME)-$(LIBVERSION)_s.a
-	echo "LIBRARY $(OS2_DLL_NAME) INITINSTANCE TERMINSTANCE" > $(OS2_DLL_NAME).def
-	echo "DATA MULTIPLE" >> $(OS2_DLL_NAME).def
-	echo "EXPORTS" >> $(OS2_DLL_NAME).def
-	emxexp $(OS2_DLL_OBJ) >> $(OS2_DLL_NAME).def
-	gcc -g -Zbin-files -Zhigh-mem -Zomf -Zdll $(OS2_DLL_NAME).def -o $@ $(OS2_DLL_OBJ) $(OS2_DLL_LIBS) 
-	emximp -o $(OS2_LA_NAME)-$(LIBVERSION).a $(OS2_DLL_NAME).def
-	emximp -o $(OS2_LA_NAME)-$(LIBVERSION).lib $(OS2_DLL_NAME).def
-
-$(OS2_DLL_NAME2).dll: $(libdb_version) $(OS2_DLL_OBJ2)
-	cp $(OS2_LA_NAME2)-$(LIBVERSION).a $(OS2_LA_NAME2)-$(LIBVERSION)_s.a
-	echo "LIBRARY $(OS2_DLL_NAME2) INITINSTANCE TERMINSTANCE" > $(OS2_DLL_NAME2).def
-	echo "DATA MULTIPLE" >> $(OS2_DLL_NAME2).def
-	echo "EXPORTS" >> $(OS2_DLL_NAME2).def
-	emxexp $(OS2_DLL_OBJ2) >> $(OS2_DLL_NAME2).def
-	gcc -g -Zbin-files -Zhigh-mem -Zomf -Zdll $(OS2_DLL_NAME2).def -o $@ $(OS2_DLL_OBJ2) $(OS2_DLL_LIBS2) 
-	emximp -o $(OS2_LA_NAME2)-$(LIBVERSION).a $(OS2_DLL_NAME2).def
-	emximp -o $(OS2_LA_NAME2)-$(LIBVERSION).lib $(OS2_DLL_NAME2).def
