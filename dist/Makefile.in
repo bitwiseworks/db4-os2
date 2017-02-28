@@ -68,6 +68,7 @@ libso=		$(libdb_base)-$(LIBVERSION)@SOSUFFIX@
 libso_target=	$(libdb_base)-$(LIBVERSION).la
 libso_default=	$(libdb_base)@SOSUFFIX@
 libso_major=	$(libdb_base)-$(LIBMAJOR)@SOSUFFIX@
+libso_short=	db@DB_VERSION_MAJOR@@DB_VERSION_MINOR@
 
 ##################################################
 # C++ API.
@@ -87,6 +88,7 @@ libxso=		$(libcxx_base)-$(LIBVERSION)@SOSUFFIX@
 libxso_target=	$(libcxx_base)-$(LIBVERSION).la
 libxso_default=	$(libcxx_base)@SOSUFFIX@
 libxso_major=	$(libcxx_base)-$(LIBMAJOR)@SOSUFFIX@
+libxso_short=	db@DB_VERSION_MAJOR@@DB_VERSION_MINOR@cxx
 
 ##################################################
 # STL API.
@@ -103,6 +105,7 @@ libstlso=	$(libstl_base)-$(LIBVERSION)@SOSUFFIX@
 libstlso_target=$(libstl_base)-$(LIBVERSION).la
 libstlso_default=$(libstl_base)@SOSUFFIX@
 libstlso_major=	$(libstl_base)-$(LIBMAJOR)@SOSUFFIX@
+libstlso_short=	db@DB_VERSION_MAJOR@@DB_VERSION_MINOR@stl
 
 ##################################################
 # Java API.
@@ -132,6 +135,7 @@ libjso_static=	$(libjso_base)-$(LIBVERSION).a
 libjso_target=	$(libjso_base)-$(LIBVERSION).la
 libjso_default=	$(libjso_base)@JMODSUFFIX@
 libjso_major=	$(libjso_base)-$(LIBMAJOR)@JMODSUFFIX@
+libjso_short=	db@DB_VERSION_MAJOR@@DB_VERSION_MINOR@j
 libjso_g=	$(libjso_base)-$(LIBVERSION)_g@JMODSUFFIX@
 
 ##################################################
@@ -147,6 +151,7 @@ libtso_static=	$(libtso_base)-$(LIBVERSION).a
 libtso_target=	$(libtso_base)-$(LIBVERSION).la
 libtso_default=	$(libtso_base)@LIBTSO_MODSUFFIX@
 libtso_major=	$(libtso_base)-$(LIBMAJOR)@LIBTSO_MODSUFFIX@
+libtso_short=	db@DB_VERSION_MAJOR@@DB_VERSION_MINOR@tcl
 
 ##################################################
 # db_dump185 UTILITY
@@ -675,7 +680,7 @@ JAVA_EXSRCS=\
 	$(JAVA_EXDIR)/persist/gettingStarted/SimpleStorePut.java \
 	$(JAVA_EXDIR)/persist/txn/PayloadDataEntity.java \
 	$(JAVA_EXDIR)/persist/txn/StoreWriter.java \
-	$(JAVA_EXDIR)/persist/txn/TxnGuideDPL.java 
+	$(JAVA_EXDIR)/persist/txn/TxnGuideDPL.java
 
 STL_OBJS=\
 	dbstl_container@o@ dbstl_resource_manager@o@
@@ -768,7 +773,8 @@ $(libdb_version): $(C_OBJS)
 
 # Shared C library.
 $(libso_target): $(C_OBJS)
-	$(SOLINK) $(SOFLAGS) $(LDFLAGS) -o $@ $(C_OBJS) $(LIBCSO_LIBS)
+	$(SOLINK) $(SOFLAGS) $(LDFLAGS) \
+	    -o $@ $(C_OBJS) $(LIBCSO_LIBS) -shortname $(libso_short)
 	$(RM) $(libdb)
 	$(LN) -s .libs/$(libdb_version) $(libdb)
 
@@ -784,8 +790,8 @@ $(libcxx_version): $(CXX_OBJS) $(C_OBJS)
 
 # Shared C++ library.
 $(libxso_target): $(CXX_OBJS) $(C_OBJS)
-	$(XSOLINK) $(SOFLAGS) $(LDFLAGS) \
-	    -o $@ $(CXX_OBJS) $(C_OBJS) $(LIBXSO_LIBS)
+	$(XSOLINK) $(SOFLAGS) $(LDFLAGS) -o $@ $(CXX_OBJS) $(C_OBJS) $(LIBXSO_LIBS) \
+	    -shortname $(libxso_short)
 	$(RM) $(libcxx)
 	$(LN) -s .libs/$(libcxx_version) $(libcxx)
 
@@ -802,19 +808,20 @@ $(libstl_version): $(STL_OBJS) $(CXX_OBJS) $(C_OBJS)
 # Shared STL library.
 $(libstlso_target): $(STL_OBJS) $(CXX_OBJS) $(C_OBJS)
 	$(XSOLINK) $(SOFLAGS) $(LDFLAGS) -o $@ \
-	    $(STL_OBJS) $(LIBSTLSO_LIBS) $(CXX_OBJS) $(C_OBJS) $(LIBXSO_LIBS)
+	    $(STL_OBJS) $(LIBSTLSO_LIBS) $(CXX_OBJS) $(C_OBJS) $(LIBXSO_LIBS) \
+	     -shortname $(libstlso_short)
 	$(RM) $(libstl)
 	$(LN) -s .libs/$(libstl_version) $(libstl)
 
 # Shared Java library.
 $(libjso_target): $(JAVA_OBJS) $(C_OBJS)
 	$(SOLINK) -shrext @JMODSUFFIX@ $(SOFLAGS) $(LDFLAGS) \
-	    -o $@ $(JAVA_OBJS) $(C_OBJS) $(LIBJSO_LIBS)
+	    -o $@ $(JAVA_OBJS) $(C_OBJS) $(LIBJSO_LIBS) -shortname $(libjso_short)
 
 # Shared Tcl library.
 $(libtso_target): $(TCL_OBJS) $(C_OBJS)
 	$(SOLINK) @LIBTSO_MODULE@ $(SOFLAGS) $(LDFLAGS) \
-	    -o $@ $(TCL_OBJS) $(C_OBJS) $(LIBTSO_LIBS)
+	    -o $@ $(TCL_OBJS) $(C_OBJS) $(LIBTSO_LIBS) -shortname $(libtso_short)
 
 ##################################################
 # Creating individual dependencies and actions for building class
@@ -1155,7 +1162,7 @@ DBREPSITE_OBJS=db_repsite@o@
 db_repsite: $(DBREPSITE_OBJS) $(DEF_LIB_CXX)
 	$(CXXLINK) -o $@ \
 	   $(LDFLAGS) $(DBREPSITE_OBJS) $(DEF_LIB_CXX) $(TEST_LIBS) $(LIBS)
-	$(POSTLINK) $@ 
+	$(POSTLINK) $@
 
 db_reptest@o@: $(srcdir)/test_repmgr/db_reptest.c
 	$(CC) $(CFLAGS) $?
@@ -1169,7 +1176,7 @@ reptest_util@o@: $(srcdir)/test_repmgr/reptest_util.c
 	$(CC) $(CFLAGS) $?
 DBREPTEST_OBJS=\
 	db_reptest@o@ reptest_am@o@ reptest_handles@o@ \
-	reptest_spawn@o@ reptest_util@o@ 
+	reptest_spawn@o@ reptest_util@o@
 
 db_reptest: $(DBREPTEST_OBJS) $(DEF_LIB)
 	$(CCLINK) -o $@ \
