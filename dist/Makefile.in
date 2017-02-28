@@ -789,9 +789,9 @@ $(libcxx_version): $(CXX_OBJS) $(C_OBJS)
 	$(LN) -s $(libcxx_version) $(libcxx)
 
 # Shared C++ library.
-$(libxso_target): $(CXX_OBJS) $(C_OBJS)
-	$(XSOLINK) $(SOFLAGS) $(LDFLAGS) -o $@ $(CXX_OBJS) $(C_OBJS) $(LIBXSO_LIBS) \
-	    -shortname $(libxso_short)
+$(libxso_target): $(CXX_OBJS) @C_OBJS_LIB@
+	$(XSOLINK) $(SOFLAGS) $(LDFLAGS) -o $@ $(CXX_OBJS) @C_OBJS_LIB@ \
+	    $(LIBXSO_LIBS) -shortname $(libxso_short)
 	$(RM) $(libcxx)
 	$(LN) -s .libs/$(libcxx_version) $(libcxx)
 
@@ -806,22 +806,22 @@ $(libstl_version): $(STL_OBJS) $(CXX_OBJS) $(C_OBJS)
 	$(LN) -s $(libstl_version) $(libstl)
 
 # Shared STL library.
-$(libstlso_target): $(STL_OBJS) $(CXX_OBJS) $(C_OBJS)
+$(libstlso_target): $(STL_OBJS) @CXX_OBJS_LIB@ @C_OBJS_LIB@
 	$(XSOLINK) $(SOFLAGS) $(LDFLAGS) -o $@ \
-	    $(STL_OBJS) $(LIBSTLSO_LIBS) $(CXX_OBJS) $(C_OBJS) $(LIBXSO_LIBS) \
+	    $(STL_OBJS) $(LIBSTLSO_LIBS) @CXX_OBJS_LIB@ @C_OBJS_LIB@ $(LIBXSO_LIBS) \
 	     -shortname $(libstlso_short)
 	$(RM) $(libstl)
 	$(LN) -s .libs/$(libstl_version) $(libstl)
 
 # Shared Java library.
-$(libjso_target): $(JAVA_OBJS) $(C_OBJS)
+$(libjso_target): $(JAVA_OBJS) @C_OBJS_LIB@
 	$(SOLINK) -shrext @JMODSUFFIX@ $(SOFLAGS) $(LDFLAGS) \
-	    -o $@ $(JAVA_OBJS) $(C_OBJS) $(LIBJSO_LIBS) -shortname $(libjso_short)
+	    -o $@ $(JAVA_OBJS) @C_OBJS_LIB@ $(LIBJSO_LIBS) -shortname $(libjso_short)
 
 # Shared Tcl library.
-$(libtso_target): $(TCL_OBJS) $(C_OBJS)
+$(libtso_target): $(TCL_OBJS) @C_OBJS_LIB@
 	$(SOLINK) @LIBTSO_MODULE@ $(SOFLAGS) $(LDFLAGS) \
-	    -o $@ $(TCL_OBJS) $(C_OBJS) $(LIBTSO_LIBS) -shortname $(libtso_short)
+	    -o $@ $(TCL_OBJS) @C_OBJS_LIB@ $(LIBTSO_LIBS) -shortname $(libtso_short)
 
 ##################################################
 # Creating individual dependencies and actions for building class

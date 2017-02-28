@@ -32,12 +32,14 @@ AC_SUBST(ADDITIONAL_LANG)
 AC_SUBST(ADDITIONAL_OBJS)
 AC_SUBST(ADDITIONAL_PROGS)
 AC_SUBST(BUILD_TARGET)
+AC_SUBST(C_OBJS_LIB)
 AC_SUBST(CFLAGS)
 AC_SUBST(CONFIGURATION_ARGS)
 AC_SUBST(CONFIGURATION_PATH)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(CRYPTO_OBJS)
 AC_SUBST(CXX)
+AC_SUBST(CXX_OBJS_LIB)
 AC_SUBST(CXXFLAGS)
 AC_SUBST(DB_CONST)
 AC_SUBST(DB_PROTO1)
@@ -358,6 +360,27 @@ case "$host_os" in
         LIBTSO_MODSUFFIX=$MODSUFFIX;;
 esac
 
+# On OS/2 we want all shared libraies to take Db C and C++ APIs from the
+# respective shared libraries rather than from object files (to significantly
+# reduce the size and memory footprint of these libraries by the price of
+# runtime dependency to Db C and C++ shared libraries).
+if test "$enable_shared" = "yes"; then
+	case "$host_os" in
+		os2*)
+			C_OBJS_LIB="\$(libso_target)"
+			if test "$db_cv_cxx" = "yes"; then
+				CXX_OBJS_LIB="\$(libxso_target)"
+			else
+				CXX_OBJS_LIB="\$(CXX_OBJS)"
+			fi
+			;;
+		*)
+			C_OBJS_LIB="\$(C_OBJS)"
+			CXX_OBJS_LIB="\$(CXX_OBJS)"
+		;;
+	esac
+fi
+
 # C API.
 if test "$enable_shared" = "no"; then
 	DEFAULT_LIB="\$(libdb_version)"
@@ -396,7 +419,7 @@ if test "$db_cv_java" = "yes"; then
 
         # A classpath that includes . is needed to check for Java
 	# Since Cygwin uses Windows' javac, we need Windows path separators
-	case "$host_os" in 
+	case "$host_os" in
 	cygwin*)	CLASSPATH=".;$CLASSPATH";;
 	*)		CLASSPATH=".:$CLASSPATH";;
 	esac
