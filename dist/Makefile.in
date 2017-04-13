@@ -769,14 +769,14 @@ $(libdb_version): $(C_OBJS)
 	$(AR) cr $@ $(C_OBJS)
 	$(RANLIB) $@
 	$(RM) $(libdb)
-	$(LN) -s $(libdb_version) $(libdb)
+	$(LN) -s db-$(LIBVERSION).a $(libdb)
 
 # Shared C library.
 $(libso_target): $(C_OBJS)
 	$(SOLINK) $(SOFLAGS) $(LDFLAGS) \
 	    -o $@ $(C_OBJS) $(LIBCSO_LIBS) -shortname $(libso_short)
 	$(RM) $(libdb)
-	$(LN) -s .libs/$(libdb_version) $(libdb)
+	$(LN) -s .libs/db-$(LIBVERSION).a $(libdb)
 
 # Static C++ library named libdb_cxx.a.
 $(libcxx): $(DEF_LIB_CXX)
@@ -786,14 +786,14 @@ $(libcxx_version): $(CXX_OBJS) $(C_OBJS)
 	$(AR) cr $@ $(CXX_OBJS) $(C_OBJS)
 	$(RANLIB) $@
 	$(RM) $(libcxx)
-	$(LN) -s $(libcxx_version) $(libcxx)
+	$(LN) -s db_cxx-$(LIBVERSION).a $(libcxx)
 
 # Shared C++ library.
 $(libxso_target): $(CXX_OBJS) @C_OBJS_LIB@
 	$(XSOLINK) $(SOFLAGS) $(LDFLAGS) -o $@ $(CXX_OBJS) @C_OBJS_LIB@ \
 	    $(LIBXSO_LIBS) -shortname $(libxso_short)
 	$(RM) $(libcxx)
-	$(LN) -s .libs/$(libcxx_version) $(libcxx)
+	$(LN) -s .libs/db_cxx-$(LIBVERSION).a $(libcxx)
 
 # Static STL library named libdb_stl.a.
 $(libstl): $(DEF_LIB_STL)
