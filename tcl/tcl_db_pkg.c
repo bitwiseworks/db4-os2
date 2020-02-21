@@ -23,12 +23,6 @@
 /* XXX we must declare global data in just one place */
 DBTCL_GLOBAL __dbtcl_global;
 
-#ifdef __KLIBC__
-// YD we ship a single dll with bdb and tcl code, tcl loads _Init method using dll
-// name as prefix
-#define Db_tcl_Init Db_Init
-#endif
-
 /*
  * Prototypes for procedures defined later in this file:
  */
