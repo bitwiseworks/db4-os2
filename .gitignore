@@ -1,0 +1,12 @@
+dist/os2
+dist/aclocal/libtool.m4
+dist/aclocal/ltoptions.m4
+dist/aclocal/ltsugar.m4
+dist/aclocal/ltversion.m4
+dist/aclocal/lt~obsolete.m4
+dist/config.guess
+dist/config.hin
+dist/config.sub
+dist/configure
+dist/install-sh
+dist/ltmain.sh
