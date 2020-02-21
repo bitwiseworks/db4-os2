@@ -124,6 +124,10 @@ found:			return (__os_strdup(env, tdir, &dbenv->db_tmp_dir));
 	DB_TEMP_DIRECTORY("/temp");
 	DB_TEMP_DIRECTORY("C:/temp");
 	DB_TEMP_DIRECTORY("C:/tmp");
+#elif __OS2__
+	DB_TEMP_DIRECTORY("/@unixroot/var/tmp");
+	DB_TEMP_DIRECTORY("/@unixroot/var/temp");
+	DB_TEMP_DIRECTORY("/@unixroot/tmp");
 #else
 	DB_TEMP_DIRECTORY("/var/tmp");
 	DB_TEMP_DIRECTORY("/usr/tmp");

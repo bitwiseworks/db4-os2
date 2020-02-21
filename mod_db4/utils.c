@@ -40,7 +40,11 @@ int env_locks_init()
     char shmpath[32];
     unsigned short start[2] = { 1, 1 };
 
+#ifdef __OS2__
+    snprintf(shmpath, 32, "/@unixroot/var/tmp/.mod_db4.%d", getpid());
+#else
     snprintf(shmpath, 32, "/tmp/.mod_db4.%d", getpid());
+#endif
     mm = mm_create(0, shmpath);
     if(NULL == mm) {
         return -1;
