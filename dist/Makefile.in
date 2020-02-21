@@ -1,5 +1,9 @@
 # $Id$
 
+VENDOR ?=community
+BUILD_INFO=\#\#1\#\# $(shell date +'%d %b %Y %H:%M:%S')     $(shell uname -n)
+BUILDLEVEL_INFO=@\#$(VENDOR):@PACKAGE_VERSION@\#@$(BUILD_INFO)::::@DB_VERSION_PATCH@::
+
 srcdir=	@srcdir@/..
 builddir=.
 
@@ -774,7 +778,7 @@ $(libdb_version): $(C_OBJS)
 # Shared C library.
 $(libso_target): $(C_OBJS)
 	$(SOLINK) $(SOFLAGS) $(LDFLAGS) \
-	    -o $@ $(C_OBJS) $(LIBCSO_LIBS) -shortname $(libso_short)
+	    -o $@ $(C_OBJS) $(LIBCSO_LIBS) -shortname $(libso_short) -buildlevel '$(BUILDLEVEL_INFO)'
 	$(RM) $(libdb)
 	$(LN) -s .libs/db-$(LIBVERSION).a $(libdb)
 
@@ -791,7 +795,7 @@ $(libcxx_version): $(CXX_OBJS) $(C_OBJS)
 # Shared C++ library.
 $(libxso_target): $(CXX_OBJS) @C_OBJS_LIB@
 	$(XSOLINK) $(SOFLAGS) $(LDFLAGS) -o $@ $(CXX_OBJS) @C_OBJS_LIB@ \
-	    $(LIBXSO_LIBS) -shortname $(libxso_short)
+	    $(LIBXSO_LIBS) -shortname $(libxso_short) -buildlevel '$(BUILDLEVEL_INFO)'
 	$(RM) $(libcxx)
 	$(LN) -s .libs/db_cxx-$(LIBVERSION).a $(libcxx)
 
@@ -809,19 +813,19 @@ $(libstl_version): $(STL_OBJS) $(CXX_OBJS) $(C_OBJS)
 $(libstlso_target): $(STL_OBJS) @CXX_OBJS_LIB@ @C_OBJS_LIB@
 	$(XSOLINK) $(SOFLAGS) $(LDFLAGS) -o $@ \
 	    $(STL_OBJS) $(LIBSTLSO_LIBS) @CXX_OBJS_LIB@ @C_OBJS_LIB@ $(LIBXSO_LIBS) \
-	     -shortname $(libstlso_short)
+	     -shortname $(libstlso_short) -buildlevel '$(BUILDLEVEL_INFO)'
 	$(RM) $(libstl)
 	$(LN) -s .libs/$(libstl_version) $(libstl)
 
 # Shared Java library.
 $(libjso_target): $(JAVA_OBJS) @C_OBJS_LIB@
 	$(SOLINK) -shrext @JMODSUFFIX@ $(SOFLAGS) $(LDFLAGS) \
-	    -o $@ $(JAVA_OBJS) @C_OBJS_LIB@ $(LIBJSO_LIBS) -shortname $(libjso_short)
+	    -o $@ $(JAVA_OBJS) @C_OBJS_LIB@ $(LIBJSO_LIBS) -shortname $(libjso_short) -buildlevel '$(BUILDLEVEL_INFO)'
 
 # Shared Tcl library.
 $(libtso_target): $(TCL_OBJS) @C_OBJS_LIB@
 	$(SOLINK) @LIBTSO_MODULE@ $(SOFLAGS) $(LDFLAGS) \
-	    -o $@ $(TCL_OBJS) @C_OBJS_LIB@ $(LIBTSO_LIBS) -shortname $(libtso_short)
+	    -o $@ $(TCL_OBJS) @C_OBJS_LIB@ $(LIBTSO_LIBS) -shortname $(libtso_short) -buildlevel '$(BUILDLEVEL_INFO)'
 
 ##################################################
 # Creating individual dependencies and actions for building class
