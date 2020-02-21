@@ -10,6 +10,9 @@
 #define	_DB_REPMGR_H_
 
 #include "dbinc_auto/repmgr_auto.h"
+#ifdef __OS2__
+#include <libcx/net.h>
+#endif
 
 #if defined(__cplusplus)
 extern "C" {

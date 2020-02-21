@@ -52,4 +52,7 @@ AC_DEFUN([AM_SOCKLEN_T],[
 	[$db_includes
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
+#ifdef __OS2__
+#include <libcx/net.h>
+#endif
 #endif])])
